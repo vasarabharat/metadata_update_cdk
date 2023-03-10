@@ -5,13 +5,26 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as targets from 'aws-cdk-lib/aws-events-targets';
 import { Aws } from 'aws-cdk-lib';
+import * as ecr from 'aws-cdk-lib/aws-ecr';
+import * as iam from 'aws-cdk-lib/aws-iam';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class MetadataUpdateCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const vpc = new ec2.Vpc(this, 'VPC');
+    // const vpc = new ec2.Vpc(this, 'VPC');
+
+    const ecrRepo = new ecr.Repository(this, 'MetadataUpdateRedis', {
+      repositoryName: 'metadata-update-redis',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    ecrRepo.grantPullPush(new iam.AccountRootPrincipal());
+
+
+
+
 
     const cfnComputeEnvironment = new batch.CfnComputeEnvironment(this, 'MyCfnComputeEnvironment', {
       type: 'MANAGED',
